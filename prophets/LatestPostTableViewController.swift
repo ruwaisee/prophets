@@ -150,7 +150,7 @@ class LatestPostTableViewController: UITableViewController {
             cell.postDate!.text = date
         }
         
-        if let image = self.json[row]["featured_image"].string{
+        if let image = self.json[row]["featured_image"]["attachment_meta"]["sizes"]["medium"]["url"].string{
             
             if image != "null"{
                 
