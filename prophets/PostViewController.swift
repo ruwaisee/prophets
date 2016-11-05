@@ -69,7 +69,7 @@ class PostViewController: UIViewController,UIWebViewDelegate {
             self.scrollView.addSubview(postTitle)
         }
         
-        if let featured = json["featured_image"].string{
+        if let featured = json["better_featured_image"]["media_details"]["sizes"]["medium"]["source_url"].string{
             
             //["attachment_meta"]["sizes"]["full"]["url"]
             /*

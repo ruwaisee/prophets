@@ -19,13 +19,21 @@ class LatestPostTableViewController: UITableViewController {
     
    // let latestPosts = "http://kasasalanbeya.esy.es/api/?json=get_posts&post_type=chapters"
     
-     let latestPosts = "http://prophets.esy.es/wp-json/wp/v2/chapters"
+   //  let latestPosts = "http://prophets.esy.es/wp-json/wp/v2/chapters"
     
    // let latestPosts : String = "https://wlcdesigns.com/wp-json/wp/v2/posts/"
     
+//let parameters : [String:AnyObject] = [
+      //  "filter[post_type]" : "chapters" as AnyObject,
+      //  "filter[posts_per_page]" : 5 as AnyObject
+    
+    let latestPosts : String = "http://prophets.esy.es/wp-json/wp/v2/chapters"
+   
     let parameters : [String:AnyObject] = [
-        "filter[post_type]" : "chapters" as AnyObject,
-        "filter[posts_per_page]" : 5 as AnyObject
+        "filter[cat]" : "chapter" as AnyObject,
+        "filter[post_status]" : "publish" as AnyObject,
+        "filter[posts_per_page]" : 20 as AnyObject ,
+        // "filter[order_by]" : "ASC"
     ]
     
     var json : JSON = JSON.null
@@ -39,7 +47,7 @@ class LatestPostTableViewController: UITableViewController {
         refreshControl.addTarget(self, action: #selector(LatestPostTableViewController.newNews), for: UIControlEvents.valueChanged)
         self.refreshControl = refreshControl
         
-        
+        print("\(getPosts)")
         
     }
     
@@ -121,7 +129,7 @@ class LatestPostTableViewController: UITableViewController {
          * to unwrap and check optionals
          */
         
-        guard let image = self.json[index]["featured_image"].string ,
+        guard let image = self.json[index]["better_featured_image"]["media_details"]["sizes"]["thumbnail"]["source_url"].string ,
             image != "null"
             else{
                 
@@ -137,28 +145,7 @@ class LatestPostTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> LatestPostTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath as IndexPath) as! LatestPostTableViewCell
         
-        // Get row index
-        let row = indexPath.row
-        
-        //Make sure post title is a string
-        if let title = self.json[row]["title"]["rendered"].string{
-            cell.postTitle!.text = title
-        }
-        
-        //Make sure post date is a string
-        if let date = self.json[row]["date"].string{
-            cell.postDate!.text = date
-        }
-        
-        if let image = self.json[row]["featured_image"]["attachment_meta"]["sizes"]["medium"]["url"].string{
-            
-            if image != "null"{
-                
-                ImageLoader.sharedLoader.imageForUrl(urlString: image, completionHandler:{(image: UIImage?, url: String) in
-                    cell.postImage.image = image!
-                })
-            }
-        }
+        populateFields(cell, index: indexPath.row)
         
         return cell
     }
